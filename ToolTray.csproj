@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageIcon>tool-box.png</PackageIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Product>$(AssemblyName)</Product>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <Authors>Martin</Authors>
+    <Version>1.1.0</Version>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>A tray widget for replacing the toolbar.</Description>
+    <RepositoryUrl>https://github.com/ecator/tooltray</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="icon.png" />
+    <None Remove="LICENSE" />
+    <None Remove="make.bat" />
+    <None Remove="png2ico.bat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+</Project>
