@@ -76,7 +76,7 @@ namespace ToolTray
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("Close ToolTray?", "Attention", MessageBoxButtons.YesNo) == DialogResult.No)
+            if (e.CloseReason == CloseReason.UserClosing && MessageBox.Show("Close ToolTray?", "Attention", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 e.Cancel = true;
             }
