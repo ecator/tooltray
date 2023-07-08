@@ -8,14 +8,14 @@
 - vbs
   - 用`wscript.exe`运行
 - ps1
-  - 优先使用`pwsh.exe`运行，如果没有安装[新版本PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)那么会使用旧版`powershell.exe`运行。
+  - 优先使用`pwsh.exe`运行，如果没有安装[新版本PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)那么会使用旧版`powershell.exe`运行
 - sh
   - 需要安装bash解析器，比如[Git for Windows](https://git-scm.com/download/win)
 - txt
   - 用系统自带的`notepad.exe`打开
 
 
-如果是其他后缀文件可以用bat封装，比如启动一个excel文件可以封装成下面的bat：
+如果是其他后缀文件可以用bat封装，比如启动一个Excel文件可以封装成下面的bat：
 
 ```
 start d:\sample.xlsx
@@ -36,8 +36,8 @@ RECURSE=1
 FILTER=*.bat,*.vbs
 ; 顶层工具文件夹名字可以指定多个
 [ToolBox2]
-; 脚本工具所在的文件夹，如果不存在会忽略
-PATH=\path\to\folder2
+; 脚本工具所在的文件夹，支持嵌入%环境变量%
+PATH=%OneDrive%\folder2
 ; 是否递归查找，1是启动递归，其他值或者不指定那么不会递归查找
 RECURSE=0
 ; 文件过滤器，默认是*所有文件，用半角逗号可以指定多个
