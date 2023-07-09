@@ -1,47 +1,51 @@
-# ����
-����Windows11��û�������½ǹ����������ˣ���Ҫִ��һЩ���߽ű��ǳ������㣬���Ծ��Լ�ߣ��һ��С���ߣ����������ϵͳ���̳�פ���Ҽ�����������Ӧ�Ľű����߳���
+# 概览
+升级Windows11后没有了右下角工具栏功能了，想要执行一些工具脚本非常不方便，所以就自己撸了一个小工具，启动后会在系统托盘常驻，右键即可运行相应的脚本或者程序。
 
-Ŀǰ֧��ֱ�����������׺���ļ���
+目前支持直接运行下面后缀的文件：
 
 - exe
 - bat
 - vbs
-  - ��`wscript.exe`����
+  - 用`wscript.exe`运行
 - ps1
-  - ����ʹ��`pwsh.exe`���У����û�а�װ[�°汾PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)��ô��ʹ�þɰ�`powershell.exe`����
+  - 优先使用`pwsh.exe`运行，如果没有安装[新版本PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)那么会使用旧版`powershell.exe`运行
 - sh
-  - ��Ҫ��װbash������������[Git for Windows](https://git-scm.com/download/win)
+  - 需要安装bash解析器，比如[Git for Windows](https://git-scm.com/download/win)
 - txt
-  - ��ϵͳ�Դ���`notepad.exe`��
+  - 用系统自带的`notepad.exe`打开
 
 
-�����������׺�ļ�������bat��װ����������һ��Excel�ļ����Է�װ�������bat��
+如果是其他后缀文件可以用bat封装，比如启动一个Excel文件可以封装成下面的bat：
 
 ```
 start d:\sample.xlsx
 ```
 
-# ����
+# 配置
 
-����������ʱ����ȡͬ·���µ�`ToolTray.ini`�ļ���������������Ӧ�ű����ߵ��ļ���·�����ο����£�
+工具启动的时候会读取同路径下的`ToolTray.ini`文件，里面配置了相应脚本工具的文件夹路径，参考如下：
 
 ```ini
-; ��ʾ�Ķ�������
+; 显示的顶层名字
 [ToolBox1]
-; �ű��������ڵ��ļ��У���������ڻ����
+; 脚本工具所在的文件夹，如果不存在会忽略
 PATH=\path\to\folder1
-; �Ƿ�ݹ���ң�1�������ݹ飬����ֵ���߲�ָ����ô����ݹ����
+; 是否递归查找，1是启动递归，其他值或者不指定那么不会递归查找
 RECURSE=1
-; �ļ���������Ĭ����*�����ļ����ð�Ƕ��ſ���ָ�����
+; 文件过滤器，默认是*所有文件，用半角逗号可以指定多个
 FILTER=*.bat,*.vbs
-; ���㹤���ļ������ֿ���ָ�����
+; 顶层工具文件夹名字可以指定多个
 [ToolBox2]
-; �ű��������ڵ��ļ��У�֧��Ƕ��%��������%
+; 脚本工具所在的文件夹，支持嵌入%环境变量%
 PATH=%OneDrive%\folder2
-; �Ƿ�ݹ���ң�1�������ݹ飬����ֵ���߲�ָ����ô����ݹ����
+; 是否递归查找，1是启动递归，其他值或者不指定那么不会递归查找
 RECURSE=0
-; �ļ���������Ĭ����*�����ļ����ð�Ƕ��ſ���ָ�����
+; 文件过滤器，默认是*所有文件，用半角逗号可以指定多个
 FILTER=*.ps1
 ```
 
-���Ե�������ͼ�굯�������ڱ༭����ˢ�������ļ���
+可以单击托盘图标弹出主窗口编辑或者刷新配置文件。
+
+# 开机启动
+
+`win+r`运行`shell:Startup`打开开机启动文件夹，然后把程序的快捷键方式添加进去即可。
