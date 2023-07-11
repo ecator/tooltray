@@ -3,23 +3,11 @@
 
 目前支持直接运行下面后缀的文件：
 
-- exe
-- bat
-- vbs
-  - 用`wscript.exe`运行
 - ps1
   - 优先使用`pwsh.exe`运行，如果没有安装[新版本PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)那么会使用旧版`powershell.exe`运行
-- sh
-  - 需要安装bash解析器，比如[Git for Windows](https://git-scm.com/download/win)
-- txt
-  - 用系统自带的`notepad.exe`打开
+- 其他任意文件
+  - 用系统关联的程序打开
 
-
-如果是其他后缀文件可以用bat封装，比如启动一个Excel文件可以封装成下面的bat：
-
-```
-start d:\sample.xlsx
-```
 
 # 配置
 
@@ -34,6 +22,8 @@ PATH=\path\to\folder1
 RECURSE=1
 ; 文件过滤器，默认是*所有文件，用半角逗号可以指定多个
 FILTER=*.bat,*.vbs
+; 设置需要管理员权限运行的文件过滤器，格式跟FILTER一样
+ADMIN=*.ps1
 ; 顶层工具文件夹名字可以指定多个
 [ToolBox2]
 ; 脚本工具所在的文件夹，支持嵌入%环境变量%
@@ -42,6 +32,8 @@ PATH=%OneDrive%\folder2
 RECURSE=0
 ; 文件过滤器，默认是*所有文件，用半角逗号可以指定多个
 FILTER=*.ps1
+; 设置需要管理员权限运行的文件过滤器，格式跟FILTER一样
+ADMIN=ADMIN.ps1
 ```
 
 可以单击托盘图标弹出主窗口编辑或者刷新配置文件。
