@@ -13,9 +13,11 @@ namespace ToolTray
             public string Path;
             public bool IsRecurse;
             public string[] Filter;
+            public string[] Admin;
         }
         private IniParser iniFile;
         private String iniFilePath;
+        private const string ADMIN_TAG = "RUN_AS_ADMIN";
         public FormMain()
         {
             InitializeComponent();
@@ -29,6 +31,7 @@ namespace ToolTray
 
             var assemblyName = Assembly.GetEntryAssembly().GetName();
             this.Text = assemblyName.Name + " " + assemblyName.Version + (Debugger.IsAttached ? " debug mode" : "");
+            this.Icon = Properties.Resources.icon;
             notifyIcon.Text = this.Text;
             notifyIcon.Icon = this.Icon;
         }
@@ -89,12 +92,14 @@ namespace ToolTray
             var target = item.Tag.ToString();
             var ext = Path.GetExtension(target);
             var process = new ProcessStartInfo();
+            process.UseShellExecute = true;
+            if(item.Image != null  && item.Image.Tag.ToString() == ADMIN_TAG)
+            {
+                process.Verb = "runas";
+            }
+            
             switch (ext.ToLower())
             {
-                case ".txt":
-                    process.FileName = "notepad.exe";
-                    process.Arguments = target;
-                    break;
                 case ".ps1":
                     process.FileName = "powershell.exe";
                     if (ExistInPath("pwsh.exe"))
@@ -103,29 +108,8 @@ namespace ToolTray
                     }
                     process.Arguments = "\"" + target + "\"";
                     break;
-                case ".sh":
-                    if (ExistInPath("bash.exe"))
-                    {
-                        process.FileName = "bash.exe";
-                    }
-                    else
-                    {
-                        MessageBox.Show("There is not bash.exe in PATH", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    process.Arguments = "\"/mnt/" + target.Substring(0,1).ToLower() + "/" + target.Substring(2).Replace("\\","/") + "\"";
-                    break;
-                case ".vbs":
-                    process.FileName = "wscript.exe";
-                    process.Arguments = "\"" + target + "\"";
-                    break;
-                case ".bat":
-                case ".exe":
-                    process.FileName = target;
-                    break;
                 default:
-                    MessageBox.Show("The " + ext + " is not supported", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    process.FileName = target;
                     break;
             }
             RefreshStatus("run " + target);
@@ -162,6 +146,7 @@ namespace ToolTray
                 toolItemFolder.Path = ReplaceWithEnvironmentVariable(iniFile.GetSetting(section,"PATH"));
                 toolItemFolder.IsRecurse = iniFile.GetSetting(section, "RECURSE", "0") == "1" ? true : false;
                 toolItemFolder.Filter = iniFile.GetSetting(section, "FILTER", "*").Split(",");
+                toolItemFolder.Admin = iniFile.GetSetting(section, "ADMIN", "").Split(",");
                 if (!Directory.Exists(toolItemFolder.Path))
                 {
                     skip++;
@@ -215,6 +200,11 @@ namespace ToolTray
                 item.Text = Path.GetFileName(file);
                 item.Tag = file;
                 item.Click += ToolStripItemClicked;
+                if (toolItemFolder.Admin.Any(pattern => Regex.IsMatch(Path.GetFileName(file), WildcardToRegex(pattern), RegexOptions.IgnoreCase)))
+                {
+                    item.Image = Properties.Resources.adminIcon;
+                    item.Image.Tag = ADMIN_TAG;
+                }
                 items.Add(item);
             }
             if (toolItemFolder.IsRecurse)
@@ -227,6 +217,7 @@ namespace ToolTray
                     nextToolItemFolder.Path = dir;
                     nextToolItemFolder.IsRecurse = toolItemFolder.IsRecurse;
                     nextToolItemFolder.Filter = toolItemFolder.Filter;
+                    nextToolItemFolder.Admin = toolItemFolder.Admin;
                     var nextItems = GetToolStripItems(nextToolItemFolder);
                     if (nextItems.Count > 0)
                     {
