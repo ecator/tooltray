@@ -35,6 +35,8 @@ jobs:
     needs: [build]
     if: ${{ github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v3
         with:
