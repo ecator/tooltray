@@ -43,7 +43,7 @@ jobs:
         run: ls -R
       - name: Compress
         run: |
-          Compress-Archive *.exe ToolTray-${env:GITHUB_REF_NAME}-win-x64.zip
+          zip ToolTray-${GITHUB_REF_NAME}-win-x64.zip *.exe
       - name: Release
         uses: ncipollo/release-action@v1
         with:
