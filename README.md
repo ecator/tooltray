@@ -1,4 +1,4 @@
-# 概览
+# 概览 ![build status](https://github.com/ecator/tooltray/actions/workflows/build.yml/badge.svg)
 升级Windows11后没有了右下角工具栏功能了，想要执行一些工具脚本非常不方便，所以就自己撸了一个小工具，启动后会在系统托盘常驻，右键即可运行相应的脚本或者程序。
 
 目前支持直接运行下面后缀的文件：
