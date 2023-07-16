@@ -30,7 +30,7 @@ namespace ToolTray
             InitMenu();
 
             var assemblyName = Assembly.GetEntryAssembly().GetName();
-            this.Text = assemblyName.Name + " " + assemblyName.Version + (Debugger.IsAttached ? " debug mode" : "");
+            this.Text = assemblyName.Name + " " + assemblyName.Version.ToString(3) + (Debugger.IsAttached ? " debug mode" : "");
             this.Icon = Properties.Resources.icon;
             notifyIcon.Text = this.Text;
             notifyIcon.Icon = this.Icon;
@@ -50,10 +50,7 @@ namespace ToolTray
 
         private void buttonCnf_Click(object sender, EventArgs e)
         {
-            var process = new ProcessStartInfo();
-            process.FileName = "notepad.exe";
-            process.Arguments = iniFilePath;
-            Process.Start(process);
+            OpenBy(iniFilePath);
         }
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
@@ -85,20 +82,38 @@ namespace ToolTray
             }
         }
 
-        private void ToolStripItemClicked(object sender, EventArgs e)
+        private void ToolStripItemFolderMouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+            var item = (ToolStripMenuItem)sender;
+            var target = item.Tag.ToString();
+            OpenBy(target,"explorer.exe");
+            RefreshStatus("open folder " + target);
+        }
+        private void ToolStripItemMouseUp(object sender, MouseEventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
-            //Debug.WriteLine("text:" + item.Text + " tag:" + item.Tag);
             var target = item.Tag.ToString();
-            var ext = Path.GetExtension(target);
+            var ext = Path.GetExtension(target).ToLower();
+            var scriptExts = new string[] { ".bat", ".vbs", ".ps1", ".sh", ".py", ".pl", ".rb", ".php", ".js" };
+            if (e.Button == MouseButtons.Right && scriptExts.Any(item => item.Equals(ext)))
+            {
+                OpenBy(target);
+                RefreshStatus("edit script " + target);
+                return;
+            }
+
             var process = new ProcessStartInfo();
             process.UseShellExecute = true;
-            if(item.Image != null  && item.Image.Tag.ToString() == ADMIN_TAG)
+            if (item.Image != null && item.Image.Tag.ToString() == ADMIN_TAG)
             {
                 process.Verb = "runas";
             }
-            
-            switch (ext.ToLower())
+
+            switch (ext)
             {
                 case ".ps1":
                     process.FileName = "powershell.exe";
@@ -115,7 +130,16 @@ namespace ToolTray
             RefreshStatus("run " + target);
             Process.Start(process);
         }
-        
+
+        private Process? OpenBy(string target, string opener = "notepad.exe")
+        {
+            var process = new ProcessStartInfo();
+            process.FileName = opener;
+            process.Arguments = "\"" + target + "\"";
+            return Process.Start(process);
+
+        }
+
         private bool ExistInPath(string fileName)
         {
             var paths = Environment.GetEnvironmentVariable("PATH").Split(";");
@@ -157,6 +181,8 @@ namespace ToolTray
                 {
                     var item = new ToolStripMenuItem();
                     item.Text = toolItemFolder.Text;
+                    item.Tag = toolItemFolder.Path;
+                    item.MouseUp += ToolStripItemFolderMouseUp;
                     item.DropDownItems.AddRange(items.ToArray());
                     contextMenuStrip.Items.Add(item);
                     add++;
@@ -199,7 +225,7 @@ namespace ToolTray
                 var item = new ToolStripMenuItem();
                 item.Text = Path.GetFileName(file);
                 item.Tag = file;
-                item.Click += ToolStripItemClicked;
+                item.MouseUp += ToolStripItemMouseUp;
                 if (toolItemFolder.Admin.Any(pattern => Regex.IsMatch(Path.GetFileName(file), WildcardToRegex(pattern), RegexOptions.IgnoreCase)))
                 {
                     item.Image = Properties.Resources.adminIcon;
@@ -223,6 +249,8 @@ namespace ToolTray
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = nextToolItemFolder.Text;
+                        item.Tag = nextToolItemFolder.Path;
+                        item.MouseUp += ToolStripItemFolderMouseUp;
                         item.DropDownItems.AddRange(nextItems.ToArray());
                         items.Add(item);
                     }
