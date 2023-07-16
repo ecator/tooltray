@@ -1,12 +1,25 @@
 # 概览 ![build status](https://github.com/ecator/tooltray/actions/workflows/build.yml/badge.svg)
-升级Windows11后没有了右下角工具栏功能了，想要执行一些工具脚本非常不方便，所以就自己撸了一个小工具，启动后会在系统托盘常驻，右键即可运行相应的脚本或者程序。
+升级Windows11后没有了右下角工具栏功能了，想要执行一些工具脚本非常不方便，所以就自己撸了一个小工具，启动后会在系统托盘常驻，右键即可运行相应的脚本或者程序 🐈
 
-目前支持直接运行下面后缀的文件：
+单击鼠标左键支持直接运行下面后缀的文件：
 
 - ps1
   - 优先使用`pwsh.exe`运行，如果没有安装[新版本PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows)那么会使用旧版`powershell.exe`运行
 - 其他任意文件
   - 用系统关联的程序打开
+
+如果是下面脚本单击鼠标右键可以直接用`notepad.exe`打开编辑：
+- `.bat`
+- `.vbs`
+- `.ps1`
+- `.sh`
+- `.py`
+- `.pl`
+- `.rb`
+- `.php`
+- `.js`
+
+如果单击鼠标右键的项目是一个文件夹（一般最顶层）那么就会直接打开目标文件夹。
 
 
 # 配置
