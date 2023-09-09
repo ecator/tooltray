@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 namespace ToolTray
 {
     public class IniParser
     {
-        private Hashtable keyPairs = new Hashtable();
+        private OrderedDictionary keyPairs = new OrderedDictionary();
         private String iniFilePath;
 
         private struct SectionPair
@@ -99,7 +100,7 @@ namespace ToolTray
             SectionPair sectionPair;
             sectionPair.Section = sectionName;
             sectionPair.Key = settingName;
-            if (keyPairs.ContainsKey(sectionPair))
+            if (keyPairs.Contains(sectionPair))
             {
                 return (String)keyPairs[sectionPair];
             }
